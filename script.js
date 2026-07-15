@@ -1,41 +1,51 @@
-// ===========================
+// ==========================================
 // Lumora AI
-// Main JavaScript
-// ===========================
+// Main JavaScript File
+// Version 1.0
+// ==========================================
 
-// Dark Mode Toggle
+// ------------------------------
+// Theme Toggle with Local Storage
+// ------------------------------
 
 const themeToggle = document.getElementById("themeToggle");
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+    themeToggle.textContent = "☀️";
+}
 
 themeToggle.addEventListener("click", () => {
 
     document.body.classList.toggle("dark-mode");
 
-    if(document.body.classList.contains("dark-mode")){
+    if (document.body.classList.contains("dark-mode")) {
 
+        localStorage.setItem("theme", "dark");
         themeToggle.textContent = "☀️";
 
-    }
+    } else {
 
-    else{
-
+        localStorage.setItem("theme", "light");
         themeToggle.textContent = "🌙";
 
     }
 
 });
 
-// Smooth Scroll
+// ------------------------------
+// Smooth Scrolling
+// ------------------------------
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
-    anchor.addEventListener("click", function(e){
+    anchor.addEventListener("click", function(e) {
 
         e.preventDefault();
 
         document.querySelector(this.getAttribute("href")).scrollIntoView({
 
-            behavior:"smooth"
+            behavior: "smooth"
 
         });
 
@@ -43,50 +53,82 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 });
 
-// Fade-in Animation
+// ------------------------------
+// Reveal Elements on Scroll
+// ------------------------------
 
-const cards = document.querySelectorAll(".card");
+const revealElements = document.querySelectorAll(".card, .stat, .about, .cta, .contact");
 
-const observer = new IntersectionObserver(entries => {
+const revealObserver = new IntersectionObserver((entries) => {
 
     entries.forEach(entry => {
 
-        if(entry.isIntersecting){
+        if (entry.isIntersecting) {
 
-            entry.target.classList.add("show");
+            entry.target.classList.add("visible");
 
         }
 
     });
 
-});
+}, {
 
-cards.forEach(card => {
-
-    observer.observe(card);
+    threshold: 0.2
 
 });
 
-// Button Effects
+revealElements.forEach(element => {
 
-const buttons = document.querySelectorAll("button");
-
-buttons.forEach(button=>{
-
-    button.addEventListener("mouseenter",()=>{
-
-        button.style.transform="scale(1.05)";
-
-    });
-
-    button.addEventListener("mouseleave",()=>{
-
-        button.style.transform="scale(1)";
-
-    });
+    revealObserver.observe(element);
 
 });
 
-// Console Message
+// ------------------------------
+// Animated Statistics Counter
+// ------------------------------
 
-console.log("🚀 Welcome to Lumora AI");
+const counters = document.querySelectorAll(".stat h2");
+
+const speed = 60;
+
+counters.forEach(counter => {
+
+    const updateCounter = () => {
+
+        const targetText = counter.innerText;
+
+        if (targetText.includes("%")) {
+
+            const target = parseInt(targetText);
+
+            let count = +counter.getAttribute("data-count") || 0;
+
+            if (count < target) {
+
+                count++;
+
+                counter.setAttribute("data-count", count);
+
+                counter.innerText = count + "%";
+
+                setTimeout(updateCounter, speed);
+
+            }
+
+        }
+
+    };
+
+    updateCounter();
+
+});
+
+// ------------------------------
+// Contact Form Validation
+// ------------------------------
+
+const form = document.querySelector("form");
+
+if (form) {
+
+    form.addEventListener("submit",
