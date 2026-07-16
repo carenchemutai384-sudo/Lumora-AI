@@ -533,6 +533,22 @@ justify-content:center;
     min-height:85vh;
     flex-wrap:wrap;
 }
+.hero-text{
+    flex:1;
+    min-width:320px;
+}
+
+.hero-image{
+    flex:1;
+    display:flex;
+    justify-content:center;
+}
+
+.hero-image img{
+    width:100%;
+    max-width:500px;
+    animation:float 4s ease-in-out infinite;
+}
 
 .primary-btn,
 .secondary-btn{
