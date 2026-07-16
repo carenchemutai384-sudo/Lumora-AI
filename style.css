@@ -524,44 +524,14 @@ justify-content:center;
 
 }
 
-.hero h1{
-
-font-size:48px;
-
-}
-
-.hero p{
-
-font-size:18px;
-
-}
-
-section h2{
-
-font-size:34px;
-
-}
-
-}
-
-@media(max-width:600px){
-
 .hero{
-
-padding-top:150px;
-
-}
-
-.hero h1{
-
-font-size:36px;
-
-}
-
-.hero-buttons{
-
-flex-direction:column;
-
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:60px;
+    padding:80px 8%;
+    min-height:85vh;
+    flex-wrap:wrap;
 }
 
 .primary-btn,
