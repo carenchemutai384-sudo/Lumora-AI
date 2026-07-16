@@ -344,6 +344,10 @@ footer p{
     animation-delay:.6s;
 
 }
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(37,99,235,.2);
+}
 
 @keyframes fadeUp{
 
