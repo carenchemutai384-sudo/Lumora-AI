@@ -345,6 +345,10 @@ footer h3{
 
 }
 
+.logo a{
+    color:inherit;
+    text-decoration:none;
+}
 footer p{
 
     color:#cbd5e1;
