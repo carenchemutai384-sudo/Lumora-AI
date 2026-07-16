@@ -391,6 +391,16 @@ transform:translateY(0);
     cursor:pointer;
     transition:.3s;
 }
+.primary-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 15px 25px rgba(37,99,235,.3);
+}
+
+.secondary-btn:hover{
+    background:var(--primary);
+    color:white;
+    transform:translateY(-3px);
+}
 
 transition:.3s;
 
