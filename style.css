@@ -381,6 +381,16 @@ transform:translateY(0);
     transition:.3s;
 }
 .secondary-btn{
+    background:transparent;
+    color:var(--primary);
+    border:2px solid var(--primary);
+    padding:15px 35px;
+    border-radius:50px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
 
 transition:.3s;
 
