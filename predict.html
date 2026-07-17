@@ -6,116 +6,13 @@
     <title>Lumora AI - Student Performance Predictor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="style.css">
+
     <style>
         /* --------------------------------------------------
-           LUMORA AI BRAND VARIABLES & THEMING
-        -------------------------------------------------- */
-        :root {
-            --lumora-primary: #6366f1;       /* Premium Indigo */
-            --lumora-primary-dark: #4f46e5;
-            --lumora-secondary: #a855f7;     /* Vibrant Purple */
-            --lumora-accent: #14b8a6;        /* Teal for positive highlights */
-            --lumora-danger: #ef4444;        /* Red for risk indicators */
-            --lumora-warning: #f59e0b;       /* Amber */
-            --lumora-bg: #fafafa;            /* Clean light-gray canvas */
-            --card-bg: #ffffff;
-            --text-main: #0f172a;            /* Deep slate */
-            --text-muted: #64748b;          /* Cool slate gray */
-            --border-light: #e2e8f0;
-            --radius-lg: 16px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.1);
-            --shadow-md: 0 10px 15px -3px rgba(99, 102, 241, 0.05), 0 4px 6px -4px rgba(99, 102, 241, 0.05);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* --------------------------------------------------
-           BASE RESET & LAYOUT
-        -------------------------------------------------- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--lumora-bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
-        /* --------------------------------------------------
-           HEADER & NAVIGATION
-        -------------------------------------------------- */
-        header {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-light);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--text-main);
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-
-        .logo span {
-            background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo i {
-            color: var(--lumora-primary);
-            font-size: 1.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 24px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: var(--transition-smooth);
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--lumora-primary);
-        }
-
-        /* --------------------------------------------------
-           MAIN CONTAINER & PAGE LAYOUT
+           PAGE-SPECIFIC: PREDICTOR LAYOUT
+           (not shared — only predict.html uses a two-column
+           form + results grid, so it stays local to this page)
         -------------------------------------------------- */
         main {
             flex: 1;
@@ -137,109 +34,6 @@
             }
         }
 
-        /* Card Panels */
-        .panel {
-            background-color: var(--card-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-light);
-            box-shadow: var(--shadow-lg);
-            padding: 32px;
-            transition: var(--transition-smooth);
-        }
-
-        .panel:hover {
-            box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.08);
-        }
-
-        .panel-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .panel-title i {
-            color: var(--lumora-primary);
-        }
-
-        /* --------------------------------------------------
-           FORM DESIGN
-        -------------------------------------------------- */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--text-main);
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 14px;
-            color: var(--text-muted);
-            pointer-events: none;
-            font-size: 0.95rem;
-        }
-
-        input[type="number"], select {
-            width: 100%;
-            padding: 12px 14px 12px 40px;
-            border: 1.5px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            background-color: #f8fafc;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            font-family: inherit;
-            transition: var(--transition-smooth);
-        }
-
-        input[type="number"]:focus, select:focus {
-            outline: none;
-            border-color: var(--lumora-primary);
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-        }
-
-        button.btn-predict {
-            width: 100%;
-            background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-primary-dark));
-            color: #fff;
-            padding: 14px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
-            transition: var(--transition-smooth);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button.btn-predict:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
-        }
-
-        button.btn-predict:active {
-            transform: translateY(0);
-        }
-
         /* --------------------------------------------------
            RESULTS DASHBOARD & ANIMATED METRICS
         -------------------------------------------------- */
@@ -256,7 +50,6 @@
             visibility: visible;
         }
 
-        /* Score & Progress Circle Container */
         .prediction-hero {
             display: flex;
             align-items: center;
@@ -297,7 +90,6 @@
             border-radius: 20px;
         }
 
-        /* Beautiful Animated Progress Bar */
         .progress-bar-wrapper {
             width: 100%;
             background-color: rgba(0, 0, 0, 0.06);
@@ -315,7 +107,6 @@
             transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Interactive Grid of Cards (Confidence, Risk) */
         .metric-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -339,4 +130,407 @@
             gap: 8px;
             font-size: 0.85rem;
             font-weight: 700;
-            color: var(--text
+            color: var(--text-muted);
+        }
+
+        .metric-card-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .metric-card-value.risk-low { color: var(--lumora-accent); }
+        .metric-card-value.risk-moderate { color: var(--lumora-warning); }
+        .metric-card-value.risk-high { color: var(--lumora-danger); }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .insight-card {
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1.5px solid var(--border-light);
+        }
+
+        .insight-card.strengths {
+            background-color: #f0fdfa;
+            border-color: #99f6e4;
+        }
+
+        .insight-card.gaps {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .insight-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .insight-card.strengths .insight-card-title { color: var(--lumora-accent); }
+        .insight-card.gaps .insight-card-title { color: var(--lumora-danger); }
+
+        .insight-card ul {
+            padding-left: 18px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            line-height: 1.55;
+        }
+
+        .insight-card li { margin-bottom: 6px; }
+
+        .recommendations-panel {
+            background-color: #f8fafc;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            margin-bottom: 20px;
+        }
+
+        .recommendations-panel h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--lumora-primary-dark);
+        }
+
+        .recommendations-panel ul {
+            padding-left: 18px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .recommendations-panel li { margin-bottom: 6px; }
+
+        @media (max-width: 640px) {
+            .insight-grid, .metric-grid { grid-template-columns: 1fr; }
+            .prediction-hero { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Lumora</span> AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="predict.html" class="active">Predict</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="study-plan.html">Study Plan</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- Input Panel -->
+        <div class="panel">
+            <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> Performance Predictor</h2>
+
+            <form id="predictionForm" novalidate>
+                <div class="form-group">
+                    <label for="grades">Current grade (GPA or percentage)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <input type="number" id="grades" min="0" max="100" step="0.1" placeholder="e.g. 85" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="attendance">Attendance rate (%)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <input type="number" id="attendance" min="0" max="100" placeholder="e.g. 95" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="studyHours">Weekly study hours</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-clock"></i>
+                        <input type="number" id="studyHours" min="0" max="168" placeholder="e.g. 15" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="learningHabit">Primary learning habit</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-brain"></i>
+                        <select id="learningHabit" required>
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="active">Active recall &amp; spaced repetition</option>
+                            <option value="visual">Visual aids &amp; mind mapping</option>
+                            <option value="group">Collaborative study groups</option>
+                            <option value="passive">Passive reading &amp; highlighting</option>
+                            <option value="cramming">Last-minute cramming</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-predict"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict performance</button>
+                <p class="error-msg" id="errorMsg"></p>
+            </form>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="panel results-panel" id="resultsPanel">
+            <h2 class="panel-title"><i class="fa-solid fa-chart-line"></i> Your Prediction</h2>
+
+            <div class="prediction-hero">
+                <div class="predicted-score-container">
+                    <p class="prediction-label">Predicted performance</p>
+                    <p class="predicted-score" id="predictedScore">0%</p>
+                    <span class="predicted-status" id="predictedStatus">—</span>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-card-header"><i class="fa-solid fa-brain"></i> AI Confidence</div>
+                    <div class="metric-card-value" id="confidenceValue">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card-header"><i class="fa-solid fa-triangle-exclamation"></i> Risk Level</div>
+                    <div class="metric-card-value" id="riskValue">—</div>
+                </div>
+            </div>
+
+            <div class="insight-grid">
+                <div class="insight-card strengths">
+                    <p class="insight-card-title"><i class="fa-solid fa-star"></i> Academic Strengths</p>
+                    <ul id="strengthsList"></ul>
+                </div>
+                <div class="insight-card gaps">
+                    <p class="insight-card-title"><i class="fa-solid fa-bullseye"></i> Areas to Improve</p>
+                    <ul id="gapsList"></ul>
+                </div>
+            </div>
+
+            <div class="recommendations-panel">
+                <h3><i class="fa-solid fa-book-open"></i> Recommendations</h3>
+                <ul id="recsList"></ul>
+            </div>
+
+            <button class="btn-secondary" id="downloadBtn"><i class="fa-solid fa-floppy-disk"></i> Download report (.txt)</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Lumora AI &copy; 2026. Predictions are directional estimates, not guarantees.</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultsPanel = document.getElementById('resultsPanel');
+
+        const predictedScoreEl = document.getElementById('predictedScore');
+        const predictedStatusEl = document.getElementById('predictedStatus');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const confidenceValueEl = document.getElementById('confidenceValue');
+        const riskValueEl = document.getElementById('riskValue');
+        const strengthsList = document.getElementById('strengthsList');
+        const gapsList = document.getElementById('gapsList');
+        const recsList = document.getElementById('recsList');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let lastReport = null;
+
+        function computePrediction({ grades, attendance, studyHours, habit }) {
+            let score = (grades * 0.5) + (attendance * 0.3) + Math.min(studyHours * 1.5, 20);
+            if (habit === 'passive') score -= 4;
+            if (habit === 'cramming') score -= 8;
+            if (habit === 'active') score += 6;
+            if (habit === 'group') score += 3;
+            if (habit === 'visual') score += 2;
+            score = Math.round(Math.max(0, Math.min(100, score)));
+
+            let status = 'Excellent';
+            if (score < 60) status = 'At risk';
+            else if (score < 75) status = 'Average';
+            else if (score < 90) status = 'Above average';
+
+            let risk = 'Low', riskClass = 'risk-low';
+            if (score < 60) { risk = 'High'; riskClass = 'risk-high'; }
+            else if (score < 75) { risk = 'Moderate'; riskClass = 'risk-moderate'; }
+
+            const signals = [
+                grades >= 70 ? 1 : 0,
+                attendance >= 85 ? 1 : 0,
+                studyHours >= 10 ? 1 : 0,
+                (habit === 'active' || habit === 'group') ? 1 : 0
+            ];
+            const agreement = signals.filter(s => s === signals[0]).length / signals.length;
+            const confidence = Math.round(60 + agreement * 35);
+
+            return { score, status, risk, riskClass, confidence };
+        }
+
+        function buildStrengthsAndGaps({ grades, attendance, studyHours, habit }) {
+            const strengths = [];
+            const gaps = [];
+
+            if (attendance >= 90) strengths.push('Consistent attendance keeps you close to live material.');
+            else if (attendance < 80) gaps.push('Attendance is below 80% — missed sessions compound over a term.');
+
+            if (studyHours >= 15) strengths.push('Weekly study hours are well above the typical baseline.');
+            else if (studyHours < 8) gaps.push('Study time is on the low side for steady progress.');
+
+            if (grades >= 80) strengths.push('Current grades show a strong foundation to build on.');
+            else if (grades < 65) gaps.push('Current grades suggest core concepts need reinforcing.');
+
+            if (habit === 'active' || habit === 'group') strengths.push('Your study method is one that transfers to long-term retention.');
+            if (habit === 'passive' || habit === 'cramming') gaps.push('Current study method leans on short-term memorization.');
+
+            if (strengths.length === 0) strengths.push('No standout strengths yet — small, consistent changes will show up quickly.');
+            if (gaps.length === 0) gaps.push('No major gaps detected. Keep the current routine steady.');
+
+            return { strengths, gaps };
+        }
+
+        function buildRecommendations({ grades, attendance, studyHours, habit }) {
+            const recs = [];
+            if (attendance < 85) recs.push('Attendance is a lever here — prioritize showing up to sessions covering new material.');
+            if (studyHours < 10) recs.push('Aim for at least 10–12 focused study hours a week, in short daily blocks rather than one long session.');
+            if (habit === 'passive' || habit === 'cramming') recs.push('Swap passive rereading for active recall: close the notes and try to reconstruct the material from memory.');
+            else recs.push('Your current study method is a solid base — keep it consistent rather than switching approaches.');
+            if (grades < 70) recs.push('Book time with a tutor or during office hours to close specific concept gaps before they stack up.');
+            return recs;
+        }
+
+        function renderList(el, items) {
+            el.innerHTML = '';
+            items.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                el.appendChild(li);
+            });
+        }
+
+        function readInputs() {
+            const grades = parseFloat(document.getElementById('grades').value);
+            const attendance = parseFloat(document.getElementById('attendance').value);
+            const studyHours = parseFloat(document.getElementById('studyHours').value);
+            const habit = document.getElementById('learningHabit').value;
+
+            if ([grades, attendance, studyHours].some(v => Number.isNaN(v)) || !habit) {
+                return null;
+            }
+            return { grades, attendance, studyHours, habit };
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            errorMsg.textContent = '';
+
+            const inputs = readInputs();
+            if (!inputs) {
+                errorMsg.textContent = 'Fill in every field before predicting.';
+                return;
+            }
+
+            const prediction = computePrediction(inputs);
+            const { strengths, gaps } = buildStrengthsAndGaps(inputs);
+            const recs = buildRecommendations(inputs);
+
+            predictedStatusEl.textContent = prediction.status;
+            riskValueEl.textContent = prediction.risk;
+            riskValueEl.className = `metric-card-value ${prediction.riskClass}`;
+            confidenceValueEl.textContent = `${prediction.confidence}%`;
+
+            renderList(strengthsList, strengths);
+            renderList(gapsList, gaps);
+            renderList(recsList, recs);
+
+            resultsPanel.classList.add('active');
+
+            requestAnimationFrame(() => {
+                progressBarFill.style.width = prediction.score + '%';
+            });
+            animateCount(prediction.score);
+
+            resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            lastReport = { inputs, prediction, strengths, gaps, recs };
+        });
+
+        function animateCount(target) {
+            const duration = 900;
+            const start = performance.now();
+            function tick(now) {
+                const t = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - t, 3);
+                predictedScoreEl.textContent = Math.round(target * eased) + '%';
+                if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        function formatReport({ inputs, prediction, strengths, gaps, recs }) {
+            const date = new Date().toLocaleString();
+            const habitLabels = {
+                active: 'Active recall & spaced repetition',
+                visual: 'Visual aids & mind mapping',
+                group: 'Collaborative study groups',
+                passive: 'Passive reading & highlighting',
+                cramming: 'Last-minute cramming'
+            };
+
+            let out = 'LUMORA AI — PERFORMANCE PREDICTION REPORT (v1.0)\n';
+            out += `Generated: ${date}\n`;
+            out += '='.repeat(48) + '\n\n';
+            out += 'INPUTS\n';
+            out += `  Current grade: ${inputs.grades}\n`;
+            out += `  Attendance rate: ${inputs.attendance}%\n`;
+            out += `  Weekly study hours: ${inputs.studyHours}\n`;
+            out += `  Primary learning habit: ${habitLabels[inputs.habit] || inputs.habit}\n\n`;
+            out += 'PREDICTION\n';
+            out += `  Predicted performance: ${prediction.score}% (${prediction.status})\n`;
+            out += `  Risk level: ${prediction.risk}\n`;
+            out += `  Confidence: ${prediction.confidence}%\n\n`;
+            out += 'ACADEMIC STRENGTHS\n';
+            strengths.forEach(s => out += `  - ${s}\n`);
+            out += '\nAREAS TO IMPROVE\n';
+            gaps.forEach(g => out += `  - ${g}\n`);
+            out += '\nRECOMMENDATIONS\n';
+            recs.forEach(r => out += `  - ${r}\n`);
+            return out;
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            if (!lastReport) return;
+            const text = formatReport(lastReport);
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lumora-report-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
+
+
