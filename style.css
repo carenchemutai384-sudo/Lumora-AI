@@ -66,6 +66,12 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .nav-container {
@@ -263,6 +269,59 @@ button.btn-secondary {
 }
 
 button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
+
+/* --------------------------------------------------
+   HERO BUTTON ROW
+-------------------------------------------------- */
+.hero-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.hero-buttons a { text-decoration: none; }
+
+/* --------------------------------------------------
+   FEATURES SECTION
+-------------------------------------------------- */
+.features {
+    padding: 60px 8% 20px;
+    text-align: center;
+}
+
+.features h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.section-description {
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.card .icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+}
 
 /* --------------------------------------------------
    FEATURE CARDS
