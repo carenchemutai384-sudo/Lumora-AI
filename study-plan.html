@@ -4,47 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personalized Study Plan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body>
 
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <header class="mb-8 text-center md:text-left">
-            <h1 class="text-3xl font-bold text-indigo-600">Your Personalized Study Plan</h1>
-            <p class="text-gray-600 mt-2">Customized schedule based on your predicted exam performance.</p>
-        </header>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="Lumora AI"></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="predict.html">Predict</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="study-plan.html" class="active">Study Plan</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <div class="lg:col-span-2 space-y-6">
-                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="flex items-center space-x-2 mb-4">
-                        <span class="text-2xl">📅</span>
-                        <h2 class="text-xl font-semibold">Weekly Timetable</h2>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-200 text-gray-500 text-sm">
-                                    <th class="pb-3">Day</th>
-                                    <th class="pb-3">Focus Area</th>
-                                    <th class="pb-3">Time</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 text-sm">
-                                <tr>
-                                    <td class="py-3 font-medium">Monday</td>
-                                    <td class="py-3">Core Concepts & Theory</td>
-                                    <td class="py-3 text-indigo-600">09:00 AM - 11:00 AM</td>
-                                end
-                                <tr>
-                                    <td class="py-3 font-medium">Wednesday</td>
-                                    <td class="py-3">Practice Problems & Quizzes</td>
-                                    <td class="py-3 text-indigo-600">02:00 PM - 04:00 PM</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 font-medium">Friday</td>
-                                    <td class="py-3">Weak Areas Revision</td>
-                                    <td class="py-3 text-indigo-600">10:00 AM - 12:00 PM</td>
+    <section class="hero" style="min-height: 25vh;">
+        <div class="hero-text">
+            <h1>Your Personalized Study Plan</h1>
+            <p>Customized schedule based on your predicted exam performance.</p>
+        </div>
+    </section>
 
+    <div class="study-plan-container">
+        <div class="panel">
+            <h2 class="panel-title"><i class="fa-solid fa-calendar-days"></i> Weekly Timetable</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Focus Area</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Monday</strong></td>
+                        <td>Core Concepts &amp; Theory</td>
+                        <td class="time">09:00 AM - 11:00 AM</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wednesday</strong></td>
+                        <td>Practice Problems &amp; Quizzes</td>
+                        <td class="time">02:00 PM - 04:00 PM</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Friday</strong></td>
+                        <td>Weak Areas Revision</td>
+                        <td class="time">10:00 AM - 12:00 PM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Lumora AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
