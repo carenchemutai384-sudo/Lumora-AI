@@ -57,6 +57,7 @@
             }
 
             localStorage.setItem('lumoraUser', data.name);
+            localStorage.setItem('lumoraEmail', document.getElementById('loginEmail').value);
             window.location.href = 'dashboard.html';
 
         } catch (err) {
