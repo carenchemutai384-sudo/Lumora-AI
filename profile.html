@@ -1,50 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Profile | Lumora AI</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<link rel="stylesheet" href="css/style.css">
+<header>
+    <div class="logo"><img src="images/logo.png" alt="Lumora AI"></div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="predict.html">Predict</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="study-plan.html">Study Plan</a>
+        <a href="settings.html">Settings</a>
+    </nav>
+</header>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<div class="profile-container">
+    <div class="profile-avatar">AD</div>
+    <h1>Alex Doe</h1>
+    <p style="text-align:center; color: var(--text-muted); margin-bottom: 30px;">Year 11 &bull; Joined 2026</p>
 
-<style>
+    <div class="setting">
+        <h3>Account Details</h3>
+        <label>Full Name</label>
+        <input type="text" value="Alex Doe">
+        <label>Email Address</label>
+        <input type="email" value="alex.doe@example.com">
+        <label>Grade / Level</label>
+        <input type="text" value="Year 11">
+    </div>
 
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-background:#f4f7fc;
-}
+    <div class="setting">
+        <h3>Study Snapshot</h3>
+        <p>Predicted performance: <strong>86% (Excellent)</strong></p>
+        <p>Current study streak: <strong>5 days</strong></p>
+    </div>
 
-header{
-background:#1e3c72;
-color:white;
-padding:18px 40px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+    <button class="btn-predict">Save Changes</button>
+</div>
 
-.logo{
-font-size:28px;
-font-weight:bold;
-}
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2026 Lumora AI. All rights reserved.</p>
+    </div>
+</footer>
 
-nav a{
-color:white;
-text-decoration:none;
-margin-left:20px;
-}
-
-.profile-container{
-max-width:900px;
-margin:40px auto;
-background:white;
-padding:40px;
-border-radius:15px;
-box-shadow:0 10px 25
+</body>
+</html>
