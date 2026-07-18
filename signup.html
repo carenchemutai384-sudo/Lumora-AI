@@ -1,114 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Sign Up | Lumora AI</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-background:linear-gradient(135deg,#1e3c72,#2a5298);
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-padding:20px;
-}
-
-.container{
-background:white;
-width:380px;
-padding:40px;
-border-radius:15px;
-box-shadow:0 10px 30px rgba(0,0,0,.2);
-text-align:center;
-}
-
-.logo{
-font-size:32px;
-font-weight:700;
-color:#2a5298;
-margin-bottom:10px;
-}
-
-h2{
-margin-bottom:5px;
-}
-
-p{
-color:#666;
-margin-bottom:25px;
-}
-
-input{
-width:100%;
-padding:14px;
-margin:10px 0;
-border:1px solid #ddd;
-border-radius:8px;
-font-size:15px;
-box-sizing:border-box;
-}
-
-button{
-width:100%;
-padding:14px;
-margin-top:10px;
-background:#2a5298;
-color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-transition:.3s;
-}
-
-button:hover{
-background:#1e3c72;
-}
-
-a{
-text-decoration:none;
-color:#2a5298;
-font-weight:600;
-}
-
-.footer{
-margin-top:20px;
-font-size:14px;
-}
-
-</style>
-
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="container">
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="logo">✨ Lumora AI</div>
+        <h2>Create Account</h2>
+        <p>Start your smarter learning journey today.</p>
 
-<div class="logo">
-✨ Lumora AI
+        <form>
+            <input type="text" placeholder="Full Name" required>
+            <input type="email" placeholder="Email Address" required>
+            <input type="password" placeholder="Create Password" required>
+            <input type="password" placeholder="Confirm Password" required>
+            <button class="primary-btn" type="submit">Sign Up</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="login.html">Login</a></p>
+        </div>
+    </div>
 </div>
 
-<h2>Create Account</h2>
-
-<p>Start your smarter learning journey today.</p>
-
-<form>
-
-<input type="text" placeholder="Full Name" required>
-
-<input type="email" placeholder="Email Address" required>
-
-<input type="password" placeholder="Create Password
+</body>
+</html>
