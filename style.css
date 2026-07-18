@@ -836,3 +836,54 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .study-plan-container td.time { color: var(--lumora-primary-dark); font-weight: 600; }
+
+/* ====================================================
+   DASHBOARD v2 - real data states
+==================================================== */
+.dash-welcome {
+    background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-secondary));
+    color: white;
+    padding: 30px 40px;
+}
+
+.dash-welcome h1 { font-size: 1.5rem; margin: 0 0 4px; }
+.dash-welcome p { opacity: 0.9; font-size: 0.9rem; margin: 0; }
+
+.dash-empty {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--text-muted);
+}
+
+.dash-empty a {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 12px 28px;
+    background: var(--lumora-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.history-table th {
+    text-align: left;
+    padding-bottom: 10px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+}
+
+.history-table td {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.history-table td.grade { font-weight: 700; color: var(--lumora-primary-dark); }
