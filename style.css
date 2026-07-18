@@ -552,3 +552,287 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 @media (max-width: 640px) {
     .nav-links { display: none; }
 }
+
+/* ====================================================
+   AUTH PAGES (login, signup)
+==================================================== */
+.auth-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-secondary));
+}
+
+.auth-card {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.auth-card .logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--lumora-primary-dark);
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.auth-card h2 {
+    margin-bottom: 6px;
+    font-size: 1.4rem;
+}
+
+.auth-card p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    font-size: 0.92rem;
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.auth-card input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.auth-footer {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.auth-footer a {
+    color: var(--lumora-primary-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ====================================================
+   PROFILE & SETTINGS PAGES
+==================================================== */
+.profile-container, .settings-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: white;
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-container h1, .settings-container h1 {
+    color: var(--lumora-primary-dark);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.setting {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+}
+
+.setting h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--lumora-primary-dark);
+    font-size: 1.05rem;
+}
+
+.setting label {
+    display: block;
+    margin: 12px 0 4px;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.setting select, .setting input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 4px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 auto 20px;
+}
+
+/* ====================================================
+   404 PAGE
+==================================================== */
+.not-found {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-secondary));
+    color: white;
+}
+
+.not-found h1 { font-size: 7rem; margin: 0; font-weight: 800; }
+.not-found h2 { font-size: 2rem; margin: 10px 0; }
+.not-found p { font-size: 1.05rem; margin-bottom: 30px; line-height: 1.6; max-width: 500px; }
+
+.not-found a {
+    display: inline-block;
+    padding: 14px 32px;
+    background: white;
+    color: var(--lumora-primary-dark);
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    transition: var(--transition-smooth);
+}
+
+.not-found a:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* ====================================================
+   DASHBOARD
+==================================================== */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--lumora-primary), var(--lumora-secondary));
+    color: white;
+    padding: 24px 40px;
+}
+
+.dashboard-header h1 { font-size: 1.6rem; margin: 0; }
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.dashboard-container .card h2 {
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lumora-primary-dark);
+}
+
+.chart-placeholder {
+    background: #f5f3ff;
+    border: 1px dashed var(--lumora-primary);
+    border-radius: var(--radius-sm);
+    padding: 50px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.subject-list, .plan-card ul {
+    list-style: none;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.subject-list li, .plan-card li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.subject-list li:last-child, .plan-card li:last-child { border-bottom: none; }
+
+.streak-count { font-size: 1.1rem; color: var(--lumora-accent); }
+
+.badge-container { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.badge {
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.progress-bar-container {
+    background: #eef2f7;
+    border-radius: 10px;
+    height: 26px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--lumora-primary), var(--lumora-secondary));
+    color: white;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: width 1s ease;
+}
+
+/* ====================================================
+   STUDY PLAN TABLE
+==================================================== */
+.study-plan-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 24px;
+}
+
+.study-plan-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.study-plan-container th {
+    text-align: left;
+    padding-bottom: 12px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.study-plan-container td {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.study-plan-container td.time { color: var(--lumora-primary-dark); font-weight: 600; }
