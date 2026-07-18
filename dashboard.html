@@ -17,85 +17,129 @@
             <a href="predict.html">Predict</a>
             <a href="dashboard.html" class="active">Dashboard</a>
             <a href="study-plan.html">Study Plan</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
+            <a href="#" id="logoutLink">Logout</a>
         </nav>
     </header>
 
-    <div class="dashboard-header">
-        <h1>📊 Student Dashboard</h1>
+    <div class="dash-welcome">
+        <h1 id="welcomeName">Loading your dashboard...</h1>
+        <p id="welcomeSub"></p>
     </div>
 
-    <main class="dashboard-container">
+    <main class="dashboard-container" id="dashboardContent" style="display:none;">
 
-        <section class="card profile-card">
-            <h2><i class="fa-solid fa-user"></i> Student Profile</h2>
-            <p><strong>Name:</strong> Alex Doe</p>
-            <p><strong>Grade/Level:</strong> Year 11</p>
+        <section class="card">
+            <h2><i class="fa-solid fa-chart-line"></i> Latest Prediction</h2>
+            <div id="latestPredictionBlock"></div>
         </section>
 
-        <section class="card chart-card">
-            <h2><i class="fa-solid fa-chart-line"></i> Performance Chart</h2>
-            <div class="chart-placeholder">
-                <p>[Performance Chart Visual Placeholder]</p>
-            </div>
-        </section>
-
-        <section class="card analysis-card">
-            <h2><i class="fa-solid fa-book-open"></i> Subject-by-Subject Analysis</h2>
-            <ul class="subject-list">
-                <li>Mathematics: Strong understanding of algebra, needs work on calculus.</li>
-                <li>Physics: Consistent high performer.</li>
-                <li>Chemistry: Review organic chemistry reaction mechanisms.</li>
-            </ul>
-        </section>
-
-        <section class="card ai-card">
-            <h2><i class="fa-solid fa-bullseye"></i> AI Recommendations</h2>
-            <p>Based on your performance, we suggest focusing on <strong>Calculus Practice Sets</strong> this week.</p>
-        </section>
-
-        <section class="card streak-card">
+        <section class="card">
             <h2><i class="fa-solid fa-fire"></i> Study Streak</h2>
-            <p class="streak-count">5 Days Active! Keep the momentum going.</p>
+            <p class="streak-count" id="streakText"></p>
         </section>
 
-        <section class="card plan-card">
-            <h2><i class="fa-solid fa-calendar-days"></i> Weekly Study Plan</h2>
-            <ul>
-                <li><strong>Mon:</strong> Algebra &amp; Physics problems</li>
-                <li><strong>Wed:</strong> Chemistry formulas review</li>
-                <li><strong>Fri:</strong> Practice mock exam</li>
-            </ul>
-        </section>
-
-        <section class="card badges-card">
-            <h2><i class="fa-solid fa-trophy"></i> Achievement Badges</h2>
-            <div class="badge-container">
-                <span class="badge" title="5 Day Streak">🔥 Streak Starter</span>
-                <span class="badge" title="100% Math Quiz">📐 Math Whiz</span>
-            </div>
-        </section>
-
-        <section class="card progress-card">
-            <h2><i class="fa-solid fa-chart-bar"></i> Overall Syllabus Progress</h2>
+        <section class="card">
+            <h2><i class="fa-solid fa-brain"></i> Average Confidence</h2>
             <div class="progress-bar-container">
-                <div class="progress-bar" style="width: 75%;">75% Complete</div>
+                <div class="progress-bar" id="avgConfidenceBar" style="width:0%;"></div>
             </div>
         </section>
 
-        <section class="card trends-card">
-            <h2><i class="fa-solid fa-arrow-trend-up"></i> Learning Trends</h2>
-            <p>Your study hours increased by <strong>15%</strong> compared to last week.</p>
+        <section class="card" style="grid-column: 1 / -1;">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Prediction History</h2>
+            <div id="historyBlock"></div>
         </section>
 
     </main>
+
+    <div id="emptyState" class="dash-empty" style="display:none;">
+        <i class="fa-solid fa-chart-simple" style="font-size:2.5rem; color: var(--lumora-primary); margin-bottom:14px;"></i>
+        <p>You haven't made any predictions yet.</p>
+        <a href="predict.html">Make your first prediction</a>
+    </div>
 
     <footer>
         <div class="footer-content">
             <p>&copy; 2026 Lumora AI. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        const API_BASE = 'https://lumora-ai-backend-og2k.onrender.com';
+        const email = localStorage.getItem('lumoraEmail');
+
+        // Login guard - no point showing a dashboard with nothing to show
+        if (!email) {
+            window.location.href = 'login.html';
+        }
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('lumoraUser');
+            localStorage.removeItem('lumoraEmail');
+            window.location.href = 'login.html';
+        });
+
+        async function loadDashboard() {
+            const welcomeName = document.getElementById('welcomeName');
+            const welcomeSub = document.getElementById('welcomeSub');
+
+            try {
+                const response = await fetch(`${API_BASE}/history/${encodeURIComponent(email)}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Could not load dashboard data.');
+                }
+
+                welcomeName.textContent = `Welcome back, ${data.name} 👋`;
+                welcomeSub.textContent = `${data.total_predictions} prediction${data.total_predictions === 1 ? '' : 's'} so far`;
+
+                if (data.total_predictions === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('dashboardContent').style.display = 'grid';
+
+                const latest = data.latest;
+                document.getElementById('latestPredictionBlock').innerHTML = `
+                    <p style="font-size: 2rem; font-weight: 800; color: var(--lumora-primary-dark); margin-bottom: 4px;">${latest.predicted_grade}</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Confidence: ${latest.confidence}% &bull; ${new Date(latest.created_at).toLocaleDateString()}</p>
+                `;
+
+                document.getElementById('streakText').textContent =
+                    `${data.streak_days} day${data.streak_days === 1 ? '' : 's'} active! Keep the momentum going.`;
+
+                document.getElementById('avgConfidenceBar').style.width = data.average_confidence + '%';
+                document.getElementById('avgConfidenceBar').textContent = data.average_confidence + '%';
+
+                const rows = data.history.map(p => `
+                    <tr>
+                        <td>${new Date(p.created_at).toLocaleDateString()}</td>
+                        <td class="grade">${p.predicted_grade}</td>
+                        <td>${p.confidence}%</td>
+                        <td>${p.study_hours}h study, ${p.attendance}% attendance</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('historyBlock').innerHTML = `
+                    <table class="history-table">
+                        <thead>
+                            <tr><th>Date</th><th>Grade</th><th>Confidence</th><th>Inputs</th></tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                `;
+
+            } catch (err) {
+                welcomeName.textContent = 'Could not load dashboard';
+                welcomeSub.textContent = err.message;
+            }
+        }
+
+        if (email) loadDashboard();
+    </script>
 
 </body>
 </html>
