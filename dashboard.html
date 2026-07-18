@@ -4,23 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Performance Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <header class="dashboard-header">
-        <h1>📊 Student Dashboard</h1>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="Lumora AI"></div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="predict.html">Predict</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="study-plan.html">Study Plan</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
     </header>
 
+    <div class="dashboard-header">
+        <h1>📊 Student Dashboard</h1>
+    </div>
+
     <main class="dashboard-container">
-        
+
         <section class="card profile-card">
             <h2><i class="fa-solid fa-user"></i> Student Profile</h2>
-            <div class="profile-info">
-                <p><strong>Name:</strong> Alex Doe</p>
-                <p><strong>Grade/Level:</strong> Year 11</p>
-            </div>
+            <p><strong>Name:</strong> Alex Doe</p>
+            <p><strong>Grade/Level:</strong> Year 11</p>
         </section>
 
         <section class="card chart-card">
@@ -46,13 +57,13 @@
 
         <section class="card streak-card">
             <h2><i class="fa-solid fa-fire"></i> Study Streak</h2>
-            <p class="streak-count"><strong>5 Days Active!</strong> Keep the momentum going.</p>
+            <p class="streak-count">5 Days Active! Keep the momentum going.</p>
         </section>
 
         <section class="card plan-card">
             <h2><i class="fa-solid fa-calendar-days"></i> Weekly Study Plan</h2>
             <ul>
-                <li><strong>Mon:</strong> Algebra & Physics problems</li>
+                <li><strong>Mon:</strong> Algebra &amp; Physics problems</li>
                 <li><strong>Wed:</strong> Chemistry formulas review</li>
                 <li><strong>Fri:</strong> Practice mock exam</li>
             </ul>
@@ -80,7 +91,11 @@
 
     </main>
 
-    <script src="js/script.js"></script>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Lumora AI. All rights reserved.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
-
