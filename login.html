@@ -15,10 +15,11 @@
         <h2>Welcome Back</h2>
         <p>Sign in to continue your learning journey.</p>
 
-        <form>
-            <input type="email" placeholder="Email Address" required>
-            <input type="password" placeholder="Password" required>
-            <button class="primary-btn" type="submit">Login</button>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Email Address" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button class="primary-btn" type="submit" id="loginBtn">Login</button>
+            <p style="color: #ef4444; font-size: 0.85rem; min-height: 1.2em; margin-top: 8px;" id="loginError"></p>
         </form>
 
         <div class="auth-footer">
@@ -27,6 +28,45 @@
         </div>
     </div>
 </div>
+
+<script>
+    const API_URL = 'https://lumora-ai-backend-og2k.onrender.com/login';
+    const form = document.getElementById('loginForm');
+    const errorEl = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.textContent = '';
+        btn.disabled = true;
+        btn.textContent = 'Logging in... (may take up to a minute)';
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value
+                })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Login failed.');
+            }
+
+            localStorage.setItem('lumoraUser', data.name);
+            window.location.href = 'dashboard.html';
+
+        } catch (err) {
+            errorEl.textContent = err.message;
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Login';
+        }
+    });
+</script>
 
 </body>
 </html>
