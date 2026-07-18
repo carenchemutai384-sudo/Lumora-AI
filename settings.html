@@ -1,87 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Settings | Lumora AI</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<link rel="stylesheet" href="css/style.css">
+<header>
+    <div class="logo"><img src="images/logo.png" alt="Lumora AI"></div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="predict.html">Predict</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="study-plan.html">Study Plan</a>
+        <a href="profile.html">Profile</a>
+    </nav>
+</header>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<div class="settings-container">
+    <h1>Settings</h1>
 
-<style>
+    <div class="setting">
+        <h3>Notifications</h3>
+        <label><input type="checkbox" style="width:auto; margin-right:8px;" checked> Email me weekly progress summaries</label>
+        <label><input type="checkbox" style="width:auto; margin-right:8px;" checked> Remind me about my study plan</label>
+    </div>
 
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-background:#f4f7fc;
-}
+    <div class="setting">
+        <h3>Preferences</h3>
+        <label>Language</label>
+        <select>
+            <option>English</option>
+            <option>Swahili</option>
+        </select>
+        <label>Theme</label>
+        <select>
+            <option>Light</option>
+            <option>Dark</option>
+        </select>
+    </div>
 
-header{
-background:#1e3c72;
-color:white;
-padding:18px 40px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+    <div class="setting">
+        <h3>Account</h3>
+        <label>Change Password</label>
+        <input type="password" placeholder="New password">
+    </div>
 
-.logo{
-font-size:28px;
-font-weight:bold;
-}
+    <button class="btn-predict">Save Settings</button>
+</div>
 
-nav a{
-color:white;
-text-decoration:none;
-margin-left:20px;
-}
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2026 Lumora AI. All rights reserved.</p>
+    </div>
+</footer>
 
-.container{
-max-width:900px;
-margin:40px auto;
-background:white;
-padding:35px;
-border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,.1);
-}
-
-h1{
-color:#1e3c72;
-text-align:center;
-margin-bottom:30px;
-}
-
-.setting{
-background:#eef3fb;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-}
-
-.setting h3{
-margin-top:0;
-color:#1e3c72;
-}
-
-label{
-display:block;
-margin:12px 0;
-}
-
-select,
-input{
-width:100%;
-padding:12px;
-margin-top:8px;
-border:1px solid #ccc;
-border-radius:8px;
-box-sizing:border-box;
-}
-
-button{
-margin-top:20px;
-padding:
+</body>
+</html>
