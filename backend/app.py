@@ -17,6 +17,20 @@ def get_db():
             password_hash TEXT NOT NULL
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            study_hours REAL,
+            attendance REAL,
+            assignments REAL,
+            sleep_hours REAL,
+            previous_grade TEXT,
+            predicted_grade TEXT,
+            confidence INTEGER,
+            created_at TEXT DEFAULT (datetime('now'))
+        )
+    """)
     return conn
 
 
@@ -121,9 +135,77 @@ def predict():
     # instead of returning a bare number the frontend can't interpret.
     predicted_grade = final_grade_encoder.inverse_transform(prediction)[0]
 
+    # Save this prediction to history if the request came from a logged-in
+    # user (email included). Anonymous predictions (no email) still work,
+    # they just won't show up on anyone's dashboard.
+    if data.get("email"):
+        conn = get_db()
+        conn.execute(
+            """INSERT INTO predictions
+               (email, study_hours, attendance, assignments, sleep_hours, previous_grade, predicted_grade, confidence)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (data["email"], data["study_hours"], data["attendance"], data["assignments"],
+             data["sleep_hours"], data["previous_grade"], predicted_grade, confidence)
+        )
+        conn.commit()
+        conn.close()
+
     return jsonify({
         "prediction": predicted_grade,
         "confidence": confidence
+    })
+
+
+@app.route("/history/<email>", methods=["GET"])
+def history(email):
+    conn = get_db()
+
+    user = conn.execute("SELECT name FROM users WHERE email = ?", (email,)).fetchone()
+    if not user:
+        conn.close()
+        return jsonify({"error": "No account found for this email."}), 404
+
+    rows = conn.execute(
+        """SELECT study_hours, attendance, assignments, sleep_hours, previous_grade,
+                  predicted_grade, confidence, created_at
+           FROM predictions WHERE email = ? ORDER BY created_at DESC""",
+        (email,)
+    ).fetchall()
+    conn.close()
+
+    predictions = [
+        {
+            "study_hours": r[0], "attendance": r[1], "assignments": r[2],
+            "sleep_hours": r[3], "previous_grade": r[4], "predicted_grade": r[5],
+            "confidence": r[6], "created_at": r[7]
+        }
+        for r in rows
+    ]
+
+    # Streak = number of distinct calendar days with at least one prediction,
+    # counting back consecutively from the most recent one.
+    distinct_days = sorted({p["created_at"][:10] for p in predictions}, reverse=True)
+    streak = 0
+    if distinct_days:
+        from datetime import datetime, timedelta
+        expected = datetime.strptime(distinct_days[0], "%Y-%m-%d").date()
+        for day_str in distinct_days:
+            day = datetime.strptime(day_str, "%Y-%m-%d").date()
+            if day == expected:
+                streak += 1
+                expected -= timedelta(days=1)
+            else:
+                break
+
+    avg_confidence = round(sum(p["confidence"] for p in predictions) / len(predictions)) if predictions else 0
+
+    return jsonify({
+        "name": user[0],
+        "total_predictions": len(predictions),
+        "streak_days": streak,
+        "average_confidence": avg_confidence,
+        "latest": predictions[0] if predictions else None,
+        "history": predictions
     })
 
 
