@@ -1,33 +1,552 @@
-from flask import Flask, request, jsonify
-import joblib
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumora AI - Student Performance Predictor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 
-app = Flask(__name__)
+    <style>
+        /* --------------------------------------------------
+           PAGE-SPECIFIC: PREDICTOR LAYOUT
+           (not shared — only predict.html uses a two-column
+           form + results grid, so it stays local to this page)
+        -------------------------------------------------- */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: 1.1fr 1.2fr;
+            gap: 40px;
+            align-items: start;
+        }
 
-# Load trained model
-model = joblib.load("../models/model.pkl")
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 20px 16px;
+            }
+        }
 
-@app.route("/predict", methods=["POST"])
-def predict():
+        /* --------------------------------------------------
+           RESULTS DASHBOARD & ANIMATED METRICS
+        -------------------------------------------------- */
+        .results-panel {
+            opacity: 0;
+            transform: translateY(15px);
+            visibility: hidden;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    data = request.json
+        .results-panel.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
 
-    features = [[
-        data["study_hours"],
-        data["attendance"],
-        data["assignments"],
-        data["sleep_hours"],
-        data["previous_grade"]
-    ]]
+        .prediction-hero {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+            border: 1px solid #ddd6fe;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
 
-    prediction = model.predict(features)
+        .predicted-score-container {
+            flex: 1;
+        }
 
-    return jsonify({
-        "prediction": int(prediction[0])
-    })
+        .prediction-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
 
-@app.route("/")
-def home():
-    return "Lumora AI Backend Running 🚀"
+        .predicted-score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--lumora-primary-dark);
+            line-height: 1.1;
+        }
 
-if __name__ == "__main__":
-    app.run(debug=True)
+        .predicted-status {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 4px;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .progress-bar-wrapper {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.06);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--lumora-primary), var(--lumora-secondary));
+            border-radius: 5px;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background-color: #fff;
+        }
+
+        .metric-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .metric-card-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .metric-card-value.risk-low { color: var(--lumora-accent); }
+        .metric-card-value.risk-moderate { color: var(--lumora-warning); }
+        .metric-card-value.risk-high { color: var(--lumora-danger); }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .insight-card {
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1.5px solid var(--border-light);
+        }
+
+        .insight-card.strengths {
+            background-color: #f0fdfa;
+            border-color: #99f6e4;
+        }
+
+        .insight-card.gaps {
+            background-color: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .insight-card-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .insight-card.strengths .insight-card-title { color: var(--lumora-accent); }
+        .insight-card.gaps .insight-card-title { color: var(--lumora-danger); }
+
+        .insight-card ul {
+            padding-left: 18px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            line-height: 1.55;
+        }
+
+        .insight-card li { margin-bottom: 6px; }
+
+        .recommendations-panel {
+            background-color: #f8fafc;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            margin-bottom: 20px;
+        }
+
+        .recommendations-panel h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--lumora-primary-dark);
+        }
+
+        .recommendations-panel ul {
+            padding-left: 18px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-main);
+        }
+
+        .recommendations-panel li { margin-bottom: 6px; }
+
+        @media (max-width: 640px) {
+            .insight-grid, .metric-grid { grid-template-columns: 1fr; }
+            .prediction-hero { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Lumora</span> AI
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="predict.html" class="active">Predict</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="study-plan.html">Study Plan</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- Input Panel -->
+        <div class="panel">
+            <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> Performance Predictor</h2>
+
+            <form id="predictionForm" novalidate>
+                <div class="form-group">
+                    <label for="studyHours">Weekly study hours</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-clock"></i>
+                        <input type="number" id="studyHours" min="0" max="168" placeholder="e.g. 5" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="attendance">Attendance rate (%)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <input type="number" id="attendance" min="0" max="100" placeholder="e.g. 90" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="assignments">Assignment completion score (%)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-list-check"></i>
+                        <input type="number" id="assignments" min="0" max="100" placeholder="e.g. 85" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sleepHours">Average sleep (hours/night)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-bed"></i>
+                        <input type="number" id="sleepHours" min="0" max="24" step="0.5" placeholder="e.g. 8" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="previousGrade">Previous grade</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <select id="previousGrade" required>
+                            <option value="" disabled selected>Select a grade</option>
+                            <option value="A">A</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B">B</option>
+                            <option value="C+">C+</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-predict"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict performance</button>
+                <p class="error-msg" id="errorMsg"></p>
+            </form>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="panel results-panel" id="resultsPanel">
+            <h2 class="panel-title"><i class="fa-solid fa-chart-line"></i> Your Prediction</h2>
+
+            <div class="prediction-hero">
+                <div class="predicted-score-container">
+                    <p class="prediction-label">Predicted performance</p>
+                    <p class="predicted-score" id="predictedScore">—</p>
+                    <span class="predicted-status" id="predictedStatus">—</span>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">Bar shows model confidence, not a percentage grade.</p>
+                </div>
+            </div>
+
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-card-header"><i class="fa-solid fa-brain"></i> AI Confidence</div>
+                    <div class="metric-card-value" id="confidenceValue">—</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-card-header"><i class="fa-solid fa-triangle-exclamation"></i> Risk Level</div>
+                    <div class="metric-card-value" id="riskValue">—</div>
+                </div>
+            </div>
+
+            <div class="insight-grid">
+                <div class="insight-card strengths">
+                    <p class="insight-card-title"><i class="fa-solid fa-star"></i> Academic Strengths</p>
+                    <ul id="strengthsList"></ul>
+                </div>
+                <div class="insight-card gaps">
+                    <p class="insight-card-title"><i class="fa-solid fa-bullseye"></i> Areas to Improve</p>
+                    <ul id="gapsList"></ul>
+                </div>
+            </div>
+
+            <div class="recommendations-panel">
+                <h3><i class="fa-solid fa-book-open"></i> Recommendations</h3>
+                <ul id="recsList"></ul>
+            </div>
+
+            <button class="btn-secondary" id="downloadBtn"><i class="fa-solid fa-floppy-disk"></i> Download report (.txt)</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Lumora AI &copy; 2026. Predictions are directional estimates, not guarantees.</p>
+    </footer>
+
+    <script>
+        // Set this to your deployed backend URL once it's live on Render/Railway/etc.
+        // Example: 'https://lumora-ai-backend.onrender.com/predict'
+        const API_URL = 'https://lumora-ai-backend-3pxc.onrender.com/predict';
+
+        const form = document.getElementById('predictionForm');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultsPanel = document.getElementById('resultsPanel');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        const predictedScoreEl = document.getElementById('predictedScore');
+        const predictedStatusEl = document.getElementById('predictedStatus');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const confidenceValueEl = document.getElementById('confidenceValue');
+        const riskValueEl = document.getElementById('riskValue');
+        const strengthsList = document.getElementById('strengthsList');
+        const gapsList = document.getElementById('gapsList');
+        const recsList = document.getElementById('recsList');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let lastReport = null;
+
+        // Maps the model's letter-grade output to a status label and risk level.
+        // This mirrors the grade classes the model actually learned:
+        // A, A-, B+, B, C+, C
+        const GRADE_META = {
+            'A':  { status: 'Excellent',      risk: 'Low',      riskClass: 'risk-low' },
+            'A-': { status: 'Excellent',      risk: 'Low',      riskClass: 'risk-low' },
+            'B+': { status: 'Above average',  risk: 'Low',      riskClass: 'risk-low' },
+            'B':  { status: 'Average',        risk: 'Moderate', riskClass: 'risk-moderate' },
+            'C+': { status: 'Below average',  risk: 'Moderate', riskClass: 'risk-moderate' },
+            'C':  { status: 'At risk',        risk: 'High',     riskClass: 'risk-high' }
+        };
+
+        function buildStrengthsAndGaps({ studyHours, attendance, assignments, sleepHours, previousGrade }) {
+            const strengths = [];
+            const gaps = [];
+
+            if (attendance >= 90) strengths.push('Consistent attendance keeps you close to live material.');
+            else if (attendance < 80) gaps.push('Attendance is below 80% — missed sessions compound over a term.');
+
+            if (studyHours >= 5) strengths.push('Weekly study hours are at a solid level for steady progress.');
+            else if (studyHours < 3) gaps.push('Study time is on the low side — small increases tend to compound.');
+
+            if (assignments >= 85) strengths.push('Assignment completion is strong, which reflects consistent effort.');
+            else if (assignments < 70) gaps.push('Assignment scores suggest some material isn\'t fully landing yet.');
+
+            if (sleepHours >= 7) strengths.push('Sleep is in a healthy range, which supports retention and focus.');
+            else if (sleepHours < 6) gaps.push('Sleep is below what\'s typically needed for consolidating learning.');
+
+            if (['A', 'A-', 'B+'].includes(previousGrade)) strengths.push('Previous grade shows a strong existing foundation.');
+            else if (['C', 'D'].includes(previousGrade)) gaps.push('Previous grade suggests core concepts may need reinforcing first.');
+
+            if (strengths.length === 0) strengths.push('No standout strengths yet — small, consistent changes will show up quickly.');
+            if (gaps.length === 0) gaps.push('No major gaps detected. Keep the current routine steady.');
+
+            return { strengths, gaps };
+        }
+
+        function buildRecommendations({ studyHours, attendance, assignments, sleepHours }) {
+            const recs = [];
+            if (attendance < 85) recs.push('Attendance is a lever here — prioritize showing up to sessions covering new material.');
+            if (studyHours < 5) recs.push('Aim to gradually build toward 5+ focused study hours a week, in short daily blocks.');
+            if (assignments < 80) recs.push('Treat assignments as low-stakes practice — completing them consistently compounds over a term.');
+            if (sleepHours < 7) recs.push('Sleep affects memory consolidation directly — protecting 7+ hours can improve retention, not just energy.');
+            if (recs.length === 0) recs.push('Current habits look solid — focus on maintaining consistency rather than changing approach.');
+            return recs;
+        }
+
+        function renderList(el, items) {
+            el.innerHTML = '';
+            items.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                el.appendChild(li);
+            });
+        }
+
+        function readInputs() {
+            const studyHours = parseFloat(document.getElementById('studyHours').value);
+            const attendance = parseFloat(document.getElementById('attendance').value);
+            const assignments = parseFloat(document.getElementById('assignments').value);
+            const sleepHours = parseFloat(document.getElementById('sleepHours').value);
+            const previousGrade = document.getElementById('previousGrade').value;
+
+            if ([studyHours, attendance, assignments, sleepHours].some(v => Number.isNaN(v)) || !previousGrade) {
+                return null;
+            }
+            return { studyHours, attendance, assignments, sleepHours, previousGrade };
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMsg.textContent = '';
+
+            const inputs = readInputs();
+            if (!inputs) {
+                errorMsg.textContent = 'Fill in every field before predicting.';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Waking up the AI (may take up to a minute)...';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        study_hours: inputs.studyHours,
+                        attendance: inputs.attendance,
+                        assignments: inputs.assignments,
+                        sleep_hours: inputs.sleepHours,
+                        previous_grade: inputs.previousGrade
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'The prediction service returned an error.');
+                }
+
+                const grade = data.prediction;
+                const confidence = data.confidence;
+                const meta = GRADE_META[grade] || { status: '—', risk: '—', riskClass: '' };
+
+                const { strengths, gaps } = buildStrengthsAndGaps(inputs);
+                const recs = buildRecommendations(inputs);
+
+                predictedScoreEl.textContent = grade;
+                predictedStatusEl.textContent = meta.status;
+                riskValueEl.textContent = meta.risk;
+                riskValueEl.className = `metric-card-value ${meta.riskClass}`;
+                confidenceValueEl.textContent = `${confidence}%`;
+
+                renderList(strengthsList, strengths);
+                renderList(gapsList, gaps);
+                renderList(recsList, recs);
+
+                resultsPanel.classList.add('active');
+
+                requestAnimationFrame(() => {
+                    progressBarFill.style.width = confidence + '%';
+                });
+
+                resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                lastReport = { inputs, grade, confidence, meta, strengths, gaps, recs };
+
+            } catch (err) {
+                errorMsg.textContent = 'Couldn\'t reach the prediction service. ' + err.message;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Predict performance';
+            }
+        });
+
+        function formatReport({ inputs, grade, confidence, meta, strengths, gaps, recs }) {
+            const date = new Date().toLocaleString();
+
+            let out = 'LUMORA AI — PERFORMANCE PREDICTION REPORT (v1.0)\n';
+            out += `Generated: ${date}\n`;
+            out += '='.repeat(48) + '\n\n';
+            out += 'INPUTS\n';
+            out += `  Weekly study hours: ${inputs.studyHours}\n`;
+            out += `  Attendance rate: ${inputs.attendance}%\n`;
+            out += `  Assignment completion: ${inputs.assignments}%\n`;
+            out += `  Average sleep: ${inputs.sleepHours} hours/night\n`;
+            out += `  Previous grade: ${inputs.previousGrade}\n\n`;
+            out += 'PREDICTION\n';
+            out += `  Predicted grade: ${grade} (${meta.status})\n`;
+            out += `  Risk level: ${meta.risk}\n`;
+            out += `  Model confidence: ${confidence}%\n\n`;
+            out += 'ACADEMIC STRENGTHS\n';
+            strengths.forEach(s => out += `  - ${s}\n`);
+            out += '\nAREAS TO IMPROVE\n';
+            gaps.forEach(g => out += `  - ${g}\n`);
+            out += '\nRECOMMENDATIONS\n';
+            recs.forEach(r => out += `  - ${r}\n`);
+            return out;
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            if (!lastReport) return;
+            const text = formatReport(lastReport);
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lumora-report-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>
+
+
