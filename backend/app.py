@@ -1,25 +1,34 @@
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
-import sqlite3
+import psycopg2
+import os
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
+# Set this in Render's Environment Variables once your Neon database
+# exists. Neon gives you this connection string when you create a
+# project - it looks like:
+# postgresql://user:password@ep-xxxx.aws.neon.tech/neondb?sslmode=require
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
 
 def get_db():
-    conn = sqlite3.connect("users.db")
-    conn.execute("""
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password_hash TEXT NOT NULL
         )
     """)
-    conn.execute("""
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS predictions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             email TEXT NOT NULL,
             study_hours REAL,
             attendance REAL,
@@ -28,9 +37,11 @@ def get_db():
             previous_grade TEXT,
             predicted_grade TEXT,
             confidence INTEGER,
-            created_at TEXT DEFAULT (datetime('now'))
+            created_at TIMESTAMP DEFAULT NOW()
         )
     """)
+    conn.commit()
+    cur.close()
     return conn
 
 
@@ -56,17 +67,22 @@ def signup():
         return jsonify({"error": "Password must be at least 6 characters."}), 400
 
     conn = get_db()
-    existing = conn.execute("SELECT id FROM users WHERE email = ?", (data["email"],)).fetchone()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id FROM users WHERE email = %s", (data["email"],))
+    existing = cur.fetchone()
     if existing:
+        cur.close()
         conn.close()
         return jsonify({"error": "An account with this email already exists."}), 409
 
     password_hash = generate_password_hash(data["password"])
-    conn.execute(
-        "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+    cur.execute(
+        "INSERT INTO users (name, email, password_hash) VALUES (%s, %s, %s)",
         (data["name"], data["email"], password_hash)
     )
     conn.commit()
+    cur.close()
     conn.close()
 
     return jsonify({"message": "Account created successfully."})
@@ -81,10 +97,13 @@ def login():
         return jsonify({"error": f"Missing fields: {', '.join(missing)}"}), 400
 
     conn = get_db()
-    user = conn.execute(
-        "SELECT id, name, password_hash FROM users WHERE email = ?",
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT id, name, password_hash FROM users WHERE email = %s",
         (data["email"],)
-    ).fetchone()
+    )
+    user = cur.fetchone()
+    cur.close()
     conn.close()
 
     if not user or not check_password_hash(user[2], data["password"]):
@@ -140,14 +159,16 @@ def predict():
     # they just won't show up on anyone's dashboard.
     if data.get("email"):
         conn = get_db()
-        conn.execute(
+        cur = conn.cursor()
+        cur.execute(
             """INSERT INTO predictions
                (email, study_hours, attendance, assignments, sleep_hours, previous_grade, predicted_grade, confidence)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
             (data["email"], data["study_hours"], data["attendance"], data["assignments"],
-             data["sleep_hours"], data["previous_grade"], predicted_grade, confidence)
+             data["sleep_hours"], data["previous_grade"], str(predicted_grade), confidence)
         )
         conn.commit()
+        cur.close()
         conn.close()
 
     return jsonify({
@@ -159,25 +180,30 @@ def predict():
 @app.route("/history/<email>", methods=["GET"])
 def history(email):
     conn = get_db()
+    cur = conn.cursor()
 
-    user = conn.execute("SELECT name FROM users WHERE email = ?", (email,)).fetchone()
+    cur.execute("SELECT name FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
     if not user:
+        cur.close()
         conn.close()
         return jsonify({"error": "No account found for this email."}), 404
 
-    rows = conn.execute(
+    cur.execute(
         """SELECT study_hours, attendance, assignments, sleep_hours, previous_grade,
                   predicted_grade, confidence, created_at
-           FROM predictions WHERE email = ? ORDER BY created_at DESC""",
+           FROM predictions WHERE email = %s ORDER BY created_at DESC""",
         (email,)
-    ).fetchall()
+    )
+    rows = cur.fetchall()
+    cur.close()
     conn.close()
 
     predictions = [
         {
             "study_hours": r[0], "attendance": r[1], "assignments": r[2],
             "sleep_hours": r[3], "previous_grade": r[4], "predicted_grade": r[5],
-            "confidence": r[6], "created_at": r[7]
+            "confidence": r[6], "created_at": r[7].isoformat()
         }
         for r in rows
     ]
@@ -187,7 +213,6 @@ def history(email):
     distinct_days = sorted({p["created_at"][:10] for p in predictions}, reverse=True)
     streak = 0
     if distinct_days:
-        from datetime import datetime, timedelta
         expected = datetime.strptime(distinct_days[0], "%Y-%m-%d").date()
         for day_str in distinct_days:
             day = datetime.strptime(day_str, "%Y-%m-%d").date()
