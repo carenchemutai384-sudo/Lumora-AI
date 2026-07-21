@@ -12,10 +12,10 @@
   function applyTheme(theme) {
     if (theme === "dark") {
       document.body.classList.add("dark-mode");
-      if (btn) btn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+      if (btn) btn.textContent = "☀️";
     } else {
       document.body.classList.remove("dark-mode");
-      if (btn) btn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+      if (btn) btn.textContent = "🌙";
     }
   }
 
