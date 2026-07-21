@@ -887,3 +887,62 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 
 .history-table td.grade { font-weight: 700; color: var(--lumora-primary-dark); }
+
+/* ====================================================
+   DARK MODE — ADDITIONS (v2)
+   Covers sections added after the original .dark-mode
+   block: dashboard, auth, profile/settings, 404,
+   study plan table, badges, progress bars.
+==================================================== */
+
+.dark-mode { --card-bg: #1e293b; --border-light: #334155; }
+
+.dark-mode ::placeholder { color: #94a3b8; }
+
+/* Dashboard */
+.dark-mode .chart-placeholder {
+    background: #1e293b;
+    border-color: var(--lumora-primary);
+    color: #cbd5e1;
+}
+.dark-mode .badge {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+.dark-mode .progress-bar-container { background: #1e293b; }
+.dark-mode .subject-list li,
+.dark-mode .plan-card li { border-bottom-color: #334155; }
+
+/* Study plan table */
+.dark-mode .study-plan-container th { color: #94a3b8; border-bottom-color: #334155; }
+.dark-mode .study-plan-container td { border-bottom-color: #334155; }
+
+/* History table (dashboard v2) */
+.dark-mode .history-table th { color: #94a3b8; border-bottom-color: #334155; }
+.dark-mode .history-table td { border-bottom-color: #334155; }
+.dark-mode .dash-empty { color: #cbd5e1; }
+
+/* Auth pages (login/signup) */
+.dark-mode .auth-card { background: #1e293b; color: white; }
+.dark-mode .auth-card p { color: #cbd5e1; }
+.dark-mode .auth-card input {
+    background: #0f172a;
+    color: white;
+    border-color: #334155;
+}
+.dark-mode .auth-footer { color: #94a3b8; }
+
+/* Profile / Settings */
+.dark-mode .profile-container,
+.dark-mode .settings-container { background: #1e293b; color: white; }
+.dark-mode .setting { background: #0f172a; }
+.dark-mode .setting select,
+.dark-mode .setting input {
+    background: #1e293b;
+    color: white;
+    border-color: #334155;
+}
+
+/* Theme toggle icon — subtle ring in dark mode */
+.dark-mode #themeToggle { box-shadow: 0 0 0 2px rgba(255,255,255,0.15); }
