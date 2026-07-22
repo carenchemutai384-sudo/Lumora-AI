@@ -7,26 +7,44 @@
 ==================================================== */
 
 (function () {
-  const targets = document.querySelectorAll('.card, .stat, .panel');
-  if (!targets.length) return;
+  try {
+    const targets = document.querySelectorAll('.card, .stat, .panel');
+    if (!targets.length) return;
 
-  // If the browser doesn't support IntersectionObserver, just show everything
-  if (!('IntersectionObserver' in window)) {
-    targets.forEach((el) => el.classList.add('in-view'));
-    return;
+    function revealAll() {
+      targets.forEach((el) => el.classList.add('in-view'));
+    }
+
+    // If the browser doesn't support IntersectionObserver, just show everything
+    if (!('IntersectionObserver' in window)) {
+      revealAll();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target); // reveal once, don't re-hide on scroll up
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+    );
+
+    targets.forEach((el) => observer.observe(el));
+
+    // SAFETY NET: if anything ever prevents the observer from firing
+    // (layout quirks, timing issues, etc.), force-reveal everything
+    // after 2.5s so content can never stay permanently hidden.
+    setTimeout(revealAll, 2500);
+
+  } catch (err) {
+    // If anything goes wrong at all, immediately show everything
+    // rather than risk leaving content invisible.
+    document.querySelectorAll('.card, .stat, .panel').forEach((el) => {
+      el.classList.add('in-view');
+    });
   }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-          observer.unobserve(entry.target); // reveal once, don't re-hide on scroll up
-        }
-      });
-    },
-    { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
-  );
-
-  targets.forEach((el) => observer.observe(el));
 })();
