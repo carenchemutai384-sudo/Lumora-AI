@@ -342,12 +342,11 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
     text-align: center;
     box-shadow: var(--shadow-lg);
     cursor: pointer;
-    opacity: 0;
-    transform: translateY(40px);
     transition: opacity 0.6s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card.in-view { opacity: 1; transform: translateY(0); }
+.card.scroll-hidden { opacity: 0; transform: translateY(40px); }
+.card.scroll-hidden.in-view { opacity: 1; transform: translateY(0); }
 
 .card:nth-child(2) { transition-delay: 0.1s; }
 .card:nth-child(3) { transition-delay: 0.2s; }
@@ -379,12 +378,12 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
 .stat h2 { font-size: 3.2rem; font-weight: 800; }
 .stat p { margin-top: 10px; font-size: 1.05rem; }
 
-.stat {
+.stat.scroll-hidden {
     opacity: 0;
     transform: translateY(30px);
     transition: opacity 0.7s ease, transform 0.7s ease;
 }
-.stat.in-view { opacity: 1; transform: translateY(0); }
+.stat.scroll-hidden.in-view { opacity: 1; transform: translateY(0); }
 .stat:nth-child(2) { transition-delay: 0.1s; }
 .stat:nth-child(3) { transition-delay: 0.2s; }
 .stat:nth-child(4) { transition-delay: 0.3s; }
@@ -425,11 +424,10 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
     box-shadow: var(--shadow-lg);
     padding: 32px;
     transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s ease, transform 0.7s ease;
-    opacity: 0;
-    transform: translateY(30px);
 }
 
-.panel.in-view { opacity: 1; transform: translateY(0); }
+.panel.scroll-hidden { opacity: 0; transform: translateY(30px); }
+.panel.scroll-hidden.in-view { opacity: 1; transform: translateY(0); }
 
 .panel:hover { box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.08); }
 
