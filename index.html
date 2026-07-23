@@ -168,6 +168,35 @@
 </footer>
 
 <script src="js/theme-toggle.js"></script>
-<script src="js/scroll-animations.js?v=2"></script>
+<script>
+(function () {
+  try {
+    var targets = document.querySelectorAll('.card, .stat, .panel');
+    if (!targets.length) return;
+    if (!('IntersectionObserver' in window)) return;
+
+    targets.forEach(function (el) { el.classList.add('scroll-hidden'); });
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+    targets.forEach(function (el) { observer.observe(el); });
+
+    setTimeout(function () {
+      targets.forEach(function (el) { el.classList.add('in-view'); });
+    }, 2500);
+  } catch (err) {
+    document.querySelectorAll('.scroll-hidden').forEach(function (el) {
+      el.classList.remove('scroll-hidden');
+    });
+  }
+})();
+</script>
 </body>
 </html>
