@@ -32,5 +32,72 @@
 
 <section class="contact">
     <h2 style="font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 30px;">Get in Touch</h2>
-    <form>
-        <input type="text" placeholder="Full Name" required>
+    <form id="contactForm" action="https://formspree.io/f/mvzednvg" method="POST">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="text" name="subject" placeholder="Subject" required>
+        <textarea name="message" rows="6" placeholder="Write your message here..." required></textarea>
+        <button class="primary-btn" type="submit">Send Message</button>
+        <p id="contactSuccess" style="color: #10b981; font-size: 0.9rem; min-height: 1.2em; margin-top: 8px;"></p>
+    </form>
+</section>
+
+<section class="features">
+    <h2>Why Contact Lumora AI?</h2>
+    <div class="cards">
+        <div class="card">
+            <div class="icon">💡</div>
+            <h3>Feedback</h3>
+            <p>Help us improve the platform by sharing your ideas.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🛠</div>
+            <h3>Technical Support</h3>
+            <p>Report bugs or get help using Lumora AI.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🤝</div>
+            <h3>Partnerships</h3>
+            <p>Collaborate with us to improve AI-powered education.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <h3>✨ Lumora AI</h3>
+        <p>Illuminate Your Learning</p>
+        <p>&copy; 2026 Lumora AI. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="js/theme-toggle.js"></script>
+<script src="js/scroll-animations.js"></script>
+<script>
+const contactForm = document.getElementById('contactForm');
+const contactSuccess = document.getElementById('contactSuccess');
+
+contactForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const data = new FormData(contactForm);
+    try {
+        const response = await fetch(contactForm.action, {
+            method: 'POST',
+            body: data,
+            headers: { 'Accept': 'application/json' }
+        });
+        if (response.ok) {
+            contactSuccess.textContent = "Thanks! Your message has been sent.";
+            contactForm.reset();
+        } else {
+            contactSuccess.textContent = "Something went wrong. Please try again.";
+            contactSuccess.style.color = "#ef4444";
+        }
+    } catch (error) {
+        contactSuccess.textContent = "Network error. Please try again.";
+        contactSuccess.style.color = "#ef4444";
+    }
+});
+</script>
+</body>
+</html>
