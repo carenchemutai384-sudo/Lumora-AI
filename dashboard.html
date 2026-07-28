@@ -47,6 +47,29 @@
             </div>
         </section>
 
+        <section class="card">
+            <h2><i class="fa-solid fa-bullseye"></i> Goal Tracking</h2>
+            <div id="goalDisplay" style="display:none; margin-bottom: 14px;">
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:6px;">
+                    Target: <strong id="goalTargetText"></strong> &bull; Current: <strong id="goalCurrentText"></strong>
+                </p>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="goalProgressBar" style="width:0%;"></div>
+                </div>
+            </div>
+            <select id="goalSelect" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:8px;">
+                <option value="">Set a target grade...</option>
+                <option value="A">A</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+            </select>
+            <button class="primary-btn" id="saveGoalBtn" style="width:100%;">Save Goal</button>
+            <p id="goalMsg" style="font-size:0.8rem; min-height:1.1em; margin-top:8px; color:#10b981;"></p>
+        </section>
+
         <section class="card" style="grid-column: 1 / -1;">
             <h2><i class="fa-solid fa-chart-area"></i> Confidence Trend</h2>
             <canvas id="confidenceChart" height="90"></canvas>
@@ -126,6 +149,47 @@
             });
         }
 
+        function renderGoal(goal) {
+            const goalDisplay = document.getElementById('goalDisplay');
+            const goalSelect = document.getElementById('goalSelect');
+
+            if (goal) {
+                goalDisplay.style.display = 'block';
+                document.getElementById('goalTargetText').textContent = goal.target_grade;
+                document.getElementById('goalCurrentText').textContent = goal.current_grade || '—';
+                document.getElementById('goalProgressBar').style.width = goal.progress_pct + '%';
+                document.getElementById('goalProgressBar').textContent = goal.progress_pct + '%';
+                goalSelect.value = goal.target_grade;
+            } else {
+                goalDisplay.style.display = 'none';
+            }
+        }
+
+        document.getElementById('saveGoalBtn').addEventListener('click', async () => {
+            const target = document.getElementById('goalSelect').value;
+            const goalMsg = document.getElementById('goalMsg');
+            if (!target) {
+                goalMsg.style.color = '#ef4444';
+                goalMsg.textContent = 'Pick a target grade first.';
+                return;
+            }
+            try {
+                const response = await fetch(`${API_BASE}/goal`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, target_grade: target })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Could not save goal.');
+                goalMsg.style.color = '#10b981';
+                goalMsg.textContent = 'Goal saved!';
+                loadDashboard();
+            } catch (err) {
+                goalMsg.style.color = '#ef4444';
+                goalMsg.textContent = err.message;
+            }
+        });
+
         async function loadDashboard() {
             const welcomeName = document.getElementById('welcomeName');
             const welcomeSub = document.getElementById('welcomeSub');
@@ -161,6 +225,7 @@
                 document.getElementById('avgConfidenceBar').textContent = data.average_confidence + '%';
 
                 renderConfidenceChart(data.history);
+                renderGoal(data.goal);
 
                 const rows = data.history.map(p => `
                     <tr>
