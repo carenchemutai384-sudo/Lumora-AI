@@ -7,66 +7,327 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .plan-form-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .subject-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+            background: #f8fafc;
+            border: 1.5px solid var(--border-light, #e2e8f0);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .subject-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .subject-row input, .subject-row select {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .remove-subject-btn {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .add-subject-btn {
+            background: #eef2ff;
+            color: #4f46e5;
+            border: 1.5px dashed #a5b4fc;
+            border-radius: 10px;
+            padding: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .days-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0 20px;
+        }
+
+        .day-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .hours-input {
+            width: 80px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+        }
+
+        .plan-result-table td.hours {
+            font-weight: 700;
+            color: var(--lumora-primary-dark, #4338ca);
+        }
+
+        .empty-plan-note {
+            color: var(--text-muted, #64748b);
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo"><img src="images/logo.png" alt="Lumora AI"></div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="predict.html">Predict</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="study-plan.html" class="active">Study Plan</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
-            <button id="themeToggle" aria-label="Toggle dark mode">🌙</button>
-        </nav>
-    </header>
+<header>
+    <div class="logo"><img src="images/logo.png" alt="Lumora AI"></div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="predict.html">Predict</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="study-plan.html" class="active">Study Plan</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <button id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+    </nav>
+</header>
 
-    <section class="hero" style="min-height: 25vh;">
-        <div class="hero-text">
-            <h1>Your Personalized Study Plan</h1>
-            <p>Customized schedule based on your predicted exam performance.</p>
-        </div>
-    </section>
+<section class="hero" style="min-height: 25vh;">
+    <div class="hero-text">
+        <h1>Your Personalized Study Plan</h1>
+        <p>Add your subjects and exam dates — Lumora builds a real weekly schedule around them.</p>
+    </div>
+</section>
 
-    <div class="study-plan-container">
-        <div class="panel">
-            <h2 class="panel-title"><i class="fa-solid fa-calendar-days"></i> Weekly Timetable</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Day</th>
-                        <th>Focus Area</th>
-                        <th>Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Monday</strong></td>
-                        <td>Core Concepts &amp; Theory</td>
-                        <td class="time">09:00 AM - 11:00 AM</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Wednesday</strong></td>
-                        <td>Practice Problems &amp; Quizzes</td>
-                        <td class="time">02:00 PM - 04:00 PM</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Friday</strong></td>
-                        <td>Weak Areas Revision</td>
-                        <td class="time">10:00 AM - 12:00 PM</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="study-plan-container">
+
+    <div class="panel">
+        <h2 class="panel-title"><i class="fa-solid fa-book"></i> Your Subjects</h2>
+
+        <div class="plan-form-grid" id="subjectsList"></div>
+
+        <button class="add-subject-btn" id="addSubjectBtn" type="button">+ Add Subject</button>
+
+        <h2 class="panel-title" style="margin-top: 28px;"><i class="fa-solid fa-calendar-check"></i> Study Days</h2>
+        <div class="days-checkboxes" id="daysCheckboxes"></div>
+
+        <label style="font-weight:700; font-size:0.9rem; display:block; margin-bottom:8px;">
+            Hours available per study day
+        </label>
+        <input type="number" id="dailyHours" class="hours-input" value="3" min="0.5" max="12" step="0.5">
+
+        <p id="formError" style="color:#ef4444; font-size:0.85rem; min-height:1.2em; margin-top:14px;"></p>
+
+        <button class="primary-btn generate-btn" id="generateBtn" style="margin-top: 14px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate My Study Plan
+        </button>
     </div>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 Lumora AI. All rights reserved.</p>
-        </div>
-    </footer>
+    <div class="panel" id="resultPanel" style="display:none;">
+        <h2 class="panel-title"><i class="fa-solid fa-calendar-days"></i> Your Weekly Timetable</h2>
+        <table class="plan-result-table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Subject</th>
+                    <th>Time Allocated</th>
+                </tr>
+            </thead>
+            <tbody id="planTableBody"></tbody>
+        </table>
+        <p class="empty-plan-note" id="noExamsNote" style="display:none;">
+            All exam dates have passed — add new subjects to generate a fresh plan.
+        </p>
+    </div>
+
+</div>
+
+<footer>
+    <div class="footer-content">
+        <p>&copy; 2026 Lumora AI. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DIFFICULTY_WEIGHT = { weak: 3, moderate: 2, strong: 1 };
+
+let subjectCount = 0;
+
+function addSubjectRow(prefill) {
+    subjectCount++;
+    const id = subjectCount;
+    const row = document.createElement('div');
+    row.className = 'subject-row';
+    row.dataset.id = id;
+    row.innerHTML = `
+        <input type="text" placeholder="Subject name (e.g. Chemistry)" class="subj-name" value="${prefill?.name || ''}">
+        <input type="date" class="subj-date" value="${prefill?.date || ''}">
+        <select class="subj-difficulty">
+            <option value="weak">Weak area</option>
+            <option value="moderate" selected>Moderate</option>
+            <option value="strong">Strong</option>
+        </select>
+        <button class="remove-subject-btn" type="button" onclick="this.closest('.subject-row').remove()">✕</button>
+    `;
+    document.getElementById('subjectsList').appendChild(row);
+}
+
+function buildDaysCheckboxes() {
+    const container = document.getElementById('daysCheckboxes');
+    DAYS.forEach((day, i) => {
+        const wrapper = document.createElement('label');
+        wrapper.className = 'day-checkbox';
+        wrapper.innerHTML = `<input type="checkbox" value="${day}" ${i !== 5 && i !== 6 ? 'checked' : ''}> ${day.slice(0,3)}`;
+        container.appendChild(wrapper);
+    });
+}
+
+document.getElementById('addSubjectBtn').addEventListener('click', () => addSubjectRow());
+
+function readSubjects() {
+    const rows = document.querySelectorAll('.subject-row');
+    const subjects = [];
+    rows.forEach(row => {
+        const name = row.querySelector('.subj-name').value.trim();
+        const date = row.querySelector('.subj-date').value;
+        const difficulty = row.querySelector('.subj-difficulty').value;
+        if (name && date) {
+            subjects.push({ name, examDate: new Date(date), difficulty });
+        }
+    });
+    return subjects;
+}
+
+function readSelectedDays() {
+    return Array.from(document.querySelectorAll('#daysCheckboxes input:checked')).map(cb => cb.value);
+}
+
+function generatePlan() {
+    const errorEl = document.getElementById('formError');
+    errorEl.textContent = '';
+
+    const subjects = readSubjects();
+    const selectedDays = readSelectedDays();
+    const dailyHours = parseFloat(document.getElementById('dailyHours').value);
+
+    if (subjects.length === 0) {
+        errorEl.textContent = 'Add at least one subject with a name and exam date.';
+        return;
+    }
+    if (selectedDays.length === 0) {
+        errorEl.textContent = 'Select at least one study day.';
+        return;
+    }
+    if (!dailyHours || dailyHours <= 0) {
+        errorEl.textContent = 'Enter a valid number of hours per study day.';
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const resultPanel = document.getElementById('resultPanel');
+    const tbody = document.getElementById('planTableBody');
+    const noExamsNote = document.getElementById('noExamsNote');
+    tbody.innerHTML = '';
+    resultPanel.style.display = 'block';
+
+    const activeSubjects = subjects.filter(s => s.examDate >= today);
+
+    if (activeSubjects.length === 0) {
+        noExamsNote.style.display = 'block';
+        return;
+    }
+    noExamsNote.style.display = 'none';
+
+    // Weight = difficulty weight, boosted the closer the exam is
+    const weighted = activeSubjects.map(s => {
+        const daysUntilExam = Math.max(1, Math.ceil((s.examDate - today) / 86400000));
+        const urgency = 1 / daysUntilExam;
+        const weight = DIFFICULTY_WEIGHT[s.difficulty] + (urgency * 10);
+        return { ...s, weight };
+    });
+
+    const totalWeight = weighted.reduce((sum, s) => sum + s.weight, 0);
+
+    // For each selected day (in week order), split dailyHours proportionally to weight,
+    // rounded to nearest 0.5h, skipping subjects whose exam has already passed that day.
+    selectedDays
+        .sort((a, b) => DAYS.indexOf(a) - DAYS.indexOf(b))
+        .forEach(day => {
+            weighted.forEach(subject => {
+                const share = (subject.weight / totalWeight) * dailyHours;
+                const rounded = Math.round(share * 2) / 2;
+                if (rounded >= 0.5) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${day}</strong></td>
+                        <td>${subject.name} <span style="color:#94a3b8; font-size:0.75rem;">(${subject.difficulty})</span></td>
+                        <td class="hours">${rounded}h</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        });
+
+    localStorage.setItem('lumoraStudyPlan', JSON.stringify({
+        subjects: activeSubjects.map(s => ({ name: s.name, examDate: s.examDate.toISOString(), difficulty: s.difficulty })),
+        selectedDays,
+        dailyHours,
+        generatedAt: new Date().toISOString()
+    }));
+}
+
+document.getElementById('generateBtn').addEventListener('click', generatePlan);
+
+// Initial setup
+buildDaysCheckboxes();
+addSubjectRow({ name: 'Mathematics', date: '' });
+addSubjectRow({ name: 'Chemistry', date: '' });
+
+// Restore last saved plan on load, if any
+const saved = localStorage.getItem('lumoraStudyPlan');
+if (saved) {
+    try {
+        const data = JSON.parse(saved);
+        document.getElementById('subjectsList').innerHTML = '';
+        data.subjects.forEach(s => addSubjectRow({ name: s.name, date: s.examDate.slice(0,10) }));
+        document.querySelectorAll('.subject-row').forEach((row, i) => {
+            row.querySelector('.subj-difficulty').value = data.subjects[i].difficulty;
+        });
+        document.getElementById('dailyHours').value = data.dailyHours;
+        document.querySelectorAll('#daysCheckboxes input').forEach(cb => {
+            cb.checked = data.selectedDays.includes(cb.value);
+        });
+    } catch (e) { /* ignore corrupted saved data */ }
+}
+</script>
 
 <script src="js/theme-toggle.js"></script>
 <script src="js/scroll-animations.js"></script>
