@@ -40,6 +40,13 @@ def get_db():
             created_at TIMESTAMP DEFAULT NOW()
         )
     """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS goals (
+            email TEXT PRIMARY KEY,
+            target_grade TEXT NOT NULL,
+            updated_at TIMESTAMP DEFAULT NOW()
+        )
+    """)
     conn.commit()
     cur.close()
     return conn
@@ -110,6 +117,41 @@ def login():
         return jsonify({"error": "Incorrect email or password."}), 401
 
     return jsonify({"message": "Login successful.", "name": user[1]})
+
+
+# Numeric scale used only for goal-progress calculations (not for the
+# ML model itself). Mirrors the six grade classes the model outputs.
+GRADE_POINTS = {"C": 2.0, "C+": 2.3, "B": 3.0, "B+": 3.3, "A-": 3.7, "A": 4.0}
+
+
+@app.route("/goal", methods=["POST"])
+def set_goal():
+    data = request.json
+    required_fields = ["email", "target_grade"]
+    missing = [f for f in required_fields if f not in data or not data[f]]
+    if missing:
+        return jsonify({"error": f"Missing fields: {', '.join(missing)}"}), 400
+
+    if data["target_grade"] not in GRADE_POINTS:
+        return jsonify({
+            "error": f"Unrecognized target_grade '{data['target_grade']}'. "
+                     f"Expected one of: {list(GRADE_POINTS.keys())}"
+        }), 400
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute(
+        """INSERT INTO goals (email, target_grade, updated_at)
+           VALUES (%s, %s, NOW())
+           ON CONFLICT (email) DO UPDATE
+           SET target_grade = EXCLUDED.target_grade, updated_at = NOW()""",
+        (data["email"], data["target_grade"])
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return jsonify({"message": "Goal saved.", "target_grade": data["target_grade"]})
 
 
 # Load trained model and the encoders saved alongside it
@@ -224,13 +266,35 @@ def history(email):
 
     avg_confidence = round(sum(p["confidence"] for p in predictions) / len(predictions)) if predictions else 0
 
+    # Goal progress - compares the latest prediction's grade points against
+    # the user's target, if they've set one.
+    conn2 = get_db()
+    cur2 = conn2.cursor()
+    cur2.execute("SELECT target_grade FROM goals WHERE email = %s", (email,))
+    goal_row = cur2.fetchone()
+    cur2.close()
+    conn2.close()
+
+    goal = None
+    if goal_row:
+        target_grade = goal_row[0]
+        target_points = GRADE_POINTS.get(target_grade, 0)
+        current_points = GRADE_POINTS.get(predictions[0]["predicted_grade"], 0) if predictions else 0
+        progress_pct = round(min(100, (current_points / target_points) * 100)) if target_points else 0
+        goal = {
+            "target_grade": target_grade,
+            "current_grade": predictions[0]["predicted_grade"] if predictions else None,
+            "progress_pct": progress_pct
+        }
+
     return jsonify({
         "name": user[0],
         "total_predictions": len(predictions),
         "streak_days": streak,
         "average_confidence": avg_confidence,
         "latest": predictions[0] if predictions else None,
-        "history": predictions
+        "history": predictions,
+        "goal": goal
     })
 
 
