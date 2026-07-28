@@ -3,10 +3,19 @@ import joblib
 import pandas as pd
 import psycopg2
 import os
+import requests
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+
+# Set this in Render's Environment Variables. Get a free key from
+# https://aistudio.google.com/apikey
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "gemini-2.0-flash:generateContent"
+)
 
 # Set this in Render's Environment Variables once your Neon database
 # exists. Neon gives you this connection string when you create a
@@ -152,6 +161,46 @@ def set_goal():
     conn.close()
 
     return jsonify({"message": "Goal saved.", "target_grade": data["target_grade"]})
+
+
+@app.route("/assistant", methods=["POST"])
+def assistant():
+    data = request.json
+    if not data or not data.get("message"):
+        return jsonify({"error": "Missing 'message' field."}), 400
+
+    if not GEMINI_API_KEY:
+        return jsonify({"error": "AI assistant is not configured on the server yet."}), 503
+
+    context = data.get("context", "")
+    system_instruction = (
+        "You are Lumora AI's study assistant, helping a high school student "
+        "in Kenya studying for KCSE exams. Be encouraging, concrete, and concise. "
+        "Explain concepts clearly, offer practice questions when asked, and give "
+        "study strategies grounded in the student's actual situation."
+    )
+    if context:
+        system_instruction += f" Context about this student: {context}"
+
+    payload = {
+        "contents": [{"parts": [{"text": data["message"]}]}],
+        "systemInstruction": {"parts": [{"text": system_instruction}]}
+    }
+
+    try:
+        response = requests.post(
+            f"{GEMINI_URL}?key={GEMINI_API_KEY}",
+            json=payload,
+            timeout=30
+        )
+        response.raise_for_status()
+        result = response.json()
+        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        return jsonify({"reply": reply})
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": f"Could not reach the AI assistant: {str(e)}"}), 502
+    except (KeyError, IndexError):
+        return jsonify({"error": "AI assistant returned an unexpected response."}), 502
 
 
 # Load trained model and the encoders saved alongside it
