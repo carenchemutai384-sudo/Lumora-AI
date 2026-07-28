@@ -7,6 +7,7 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -47,6 +48,11 @@
         </section>
 
         <section class="card" style="grid-column: 1 / -1;">
+            <h2><i class="fa-solid fa-chart-area"></i> Confidence Trend</h2>
+            <canvas id="confidenceChart" height="90"></canvas>
+        </section>
+
+        <section class="card" style="grid-column: 1 / -1;">
             <h2><i class="fa-solid fa-clock-rotate-left"></i> Prediction History</h2>
             <div id="historyBlock"></div>
         </section>
@@ -81,6 +87,45 @@
             window.location.href = 'login.html';
         });
 
+        function renderConfidenceChart(history) {
+            // history comes newest-first from the API - reverse for a
+            // left-to-right chronological chart
+            const chronological = [...history].reverse();
+            const labels = chronological.map(p => new Date(p.created_at).toLocaleDateString());
+            const confidenceData = chronological.map(p => p.confidence);
+
+            const ctx = document.getElementById('confidenceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Prediction Confidence (%)',
+                        data: confidenceData,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.12)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#6366f1',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: { callback: v => v + '%' }
+                        }
+                    }
+                }
+            });
+        }
+
         async function loadDashboard() {
             const welcomeName = document.getElementById('welcomeName');
             const welcomeSub = document.getElementById('welcomeSub');
@@ -114,6 +159,8 @@
 
                 document.getElementById('avgConfidenceBar').style.width = data.average_confidence + '%';
                 document.getElementById('avgConfidenceBar').textContent = data.average_confidence + '%';
+
+                renderConfidenceChart(data.history);
 
                 const rows = data.history.map(p => `
                     <tr>
