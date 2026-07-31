@@ -5,24 +5,24 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS so your frontend can talk to your backend
+// Enable CORS so your frontend can communicate with the backend
 app.use(cors());
 app.use(express.json());
 
-// Serve your static frontend files (HTML, CSS, JS) automatically
+// Serve static frontend files (CSS, images, JS) automatically from the current folder
 app.use(express.static(path.join(__dirname, './')));
 
-// The secure backend chat route
-// Explicitly serve your index.html file on the root URL
+// Explicitly serve your index.html file on the root URL path
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-('/api/chat', async (req, res) => {
+// Secure backend chat route that communicates with the Gemini API
+app.post('/api/chat', async (req, res) => {
     try {
         const { message } = req.body;
         
-        // This grabs the hidden API key safely from Render's environment
+        // Grab the hidden API key safely from Render's environment variables
         const apiKey = process.env.GEMINI_API_KEY; 
 
         if (!apiKey) {
@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
         res.json(data);
 
     } catch (error) {
-        console.error(error);
+        console.error("Backend Error:", error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
