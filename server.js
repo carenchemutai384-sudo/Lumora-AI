@@ -13,7 +13,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, './')));
 
 // The secure backend chat route
-app.post('/api/chat', async (req, res) => {
+// Explicitly serve your index.html file on the root URL
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+('/api/chat', async (req, res) => {
     try {
         const { message } = req.body;
         
