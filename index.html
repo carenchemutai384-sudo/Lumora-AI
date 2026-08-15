@@ -5,10 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumora AI | Illuminate Your Learning</title>
-
-    <link rel="icon" type="image/png" href="./images/favicon.png">
-    <link rel="stylesheet" href="./style.css">
-
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,9 +17,8 @@
     <!-- ================= HEADER ================= -->
     <header>
         <div class="logo">
-            <img src="./images/logo.png" alt="Lumora AI">
+            <img src="images/logo.png" alt="Lumora AI">
         </div>
-
         <nav>
             <a href="index.html">Home</a>
             <a href="predict.html">Predict</a>
@@ -31,29 +28,27 @@
         </nav>
     </header>
 
-    <!-- ================= MAIN CONTENT ================= -->
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>Illuminate Your Learning with Lumora AI</h1>
-            <p>Empowering students through personalized learning tools, predictive analysis, and smart study plans.</p>
-            <a href="predict.html" class="btn">Get Started</a>
-        </section>
+    <!-- ================= CHAT SECTION ================= -->
+    <main id="chat-section" class="chat-container">
+        <div class="chat-card">
+            <div class="chat-header">
+                <h2>Lumora AI Coach 🤖</h2>
+            </div>
+            
+            <!-- Message history container -->
+            <div id="chatWindow">
+                <div class="msg bot">Hello! How can I assist your study session today?</div>
+            </div>
 
-        <!-- Chat Section -->
-        <section id="chat-section" class="chat-container">
-            <h2>AI Coach</h2>
-            <div id="chat-box" class="chat-box">
-                <!-- AI Messages will render here -->
-            </div>
+            <!-- Input area -->
             <div class="chat-input-area">
-                <input type="text" id="user-input" placeholder="Ask Lumora AI anything...">
-                <button id="send-btn">Send</button>
+                <input type="text" id="chatInput" placeholder="Ask your AI Coach anything..." />
+                <button id="sendBtn">Send</button>
             </div>
-        </section>
+        </div>
     </main>
 
-    <!-- Correct relative path to your JS file -->
-    <script src="./api/chat.js"></script>
+    <!-- JS loaded from a non-API path -->
+    <script src="js/chat.js"></script>
 </body>
 </html>
