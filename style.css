@@ -162,6 +162,19 @@ nav a:hover, .nav-links a:hover, .nav-links a.active {
 }
 
 .hero-text { flex: 1; min-width: 320px; }
+/* HERO FADE-UP ANIMATION */
+.hero-text,
+.hero-image {
+    opacity: 0;
+}
+
+.hero-text {
+    animation: fadeUp 0.8s ease forwards;
+}
+
+.hero-image {
+    animation: fadeUp 1s ease 0.2s forwards;
+}
 
 .hero-text h1 {
     font-size: clamp(2rem, 5vw, 3rem);
