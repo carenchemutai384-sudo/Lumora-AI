@@ -358,8 +358,7 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
 -------------------------------------------------- */
 
 .card,
-.stat,
-.panel {
+.stat {
     opacity: 0;
     transform: translateY(30px);
     transition:
@@ -368,8 +367,7 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
 }
 
 .card.in-view,
-.stat.in-view,
-.panel.in-view {
+.stat.in-view {
     opacity: 1;
     transform: translateY(0);
 }
