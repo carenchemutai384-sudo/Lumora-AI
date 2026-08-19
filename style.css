@@ -353,12 +353,19 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
 /* Scroll-triggered reveal, driven by js/scroll-animations.js adding
    .in-view when an element enters the viewport. Applies to any card,
    stat, or panel across the site - not just the homepage feature cards. */
-.card, .stat, .panel {
+.card,
+.stat,
+.panel {
     opacity: 0;
     transform: translateY(30px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
 }
 
-.card.in-view, .stat.in-view, .panel.in-view {
+.card.in-view,
+.stat.in-view,
+.panel.in-view {
     opacity: 1;
     transform: translateY(0);
 }
