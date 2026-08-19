@@ -26,9 +26,7 @@
 
     targets.forEach((el) => observer.observe(el));
 
-    setTimeout(revealAll, 2500);
-
-  } catch (err) {
+    } catch (err) {
     document.querySelectorAll('.card, .stat, .panel').forEach((el) => {
       el.classList.add('in-view');
     });
