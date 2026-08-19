@@ -354,8 +354,7 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
    .in-view when an element enters the viewport. Applies to any card,
    stat, or panel across the site - not just the homepage feature cards. */
 .card,
-.stat,
-.panel {
+.stat {
     opacity: 0;
     transform: translateY(30px);
     transition:
@@ -364,8 +363,7 @@ button.btn-secondary:hover { background-color: rgba(99, 102, 241, 0.06); }
 }
 
 .card.in-view,
-.stat.in-view,
-.panel.in-view {
+.stat.in-view {
     opacity: 1;
     transform: translateY(0);
 }
